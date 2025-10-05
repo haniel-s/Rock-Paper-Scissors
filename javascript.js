@@ -13,57 +13,68 @@ function getComputerChoice(){
   }
 }
 
-function getHumanChoice(){
-  let x = prompt("what you want big bruh ?");
-  if (x.toLowerCase() == "rock"){
-    return "rock";
-  }
-  else if (x.toLowerCase() == "paper"){
-    return "paper";
-  }
-  else {
-    return "scissors";
-  }
-}
-
 let humanScore=0;
 let computerScore=0;
 
-function playRound(humanChoice,computerChoice){
+let playerCount = document.querySelector("#playerCount");
+let computerCount = document.querySelector("#computerCount");
+
+function playRound(humanChoice,computerChoice,commentary){
   let condition = (humanChoice == "rock" && computerChoice == "scissors") ||
                   (humanChoice == "scissors" && computerChoice == "paper") ||
                   (humanChoice == "paper" && computerChoice == "rock") ? 1 : humanChoice == computerChoice ? 2 : 0;
   if (condition == 1){
-    console.log (`you won ! ${humanChoice} beats ${computerChoice}`);
+    commentary.textContent = `you won ! ${humanChoice} beats ${computerChoice}`;
     humanScore++;
+    playerCount.textContent = humanScore;
   }
   else if (condition == 0){
-    console.log (`you lose ! ${computerChoice} beats ${humanChoice}`);
+    commentary.textContent = `you lose ! ${computerChoice} beats ${humanChoice}`;
     computerScore++;
+    computerCount.textContent = computerScore;
   }
   if (condition == 2){
-    console.log (`thats a tie ! ${humanChoice} is the same as ${computerChoice}`);
+    commentary.textContent = `thats a tie ! ${humanChoice} is the same as ${computerChoice}`;
   }
 }
 
-function playGame(){
-  for(let i=0;i<5;i++){
-  let humanChoice = getHumanChoice();
-  let computerChoice = getComputerChoice();
-  console.log (`you just used *${humanChoice}* !!!`);
-  console.log (`the computer used *${computerChoice}* against you !!!`);
-  playRound(humanChoice,computerChoice);
-  console.log (`the score is now ${humanScore} for you\nand ${computerScore} for the clanker!`);  
-  }
-  console.log(`the final score is human ${humanScore} - ${computerScore} computer`);
+function endRound(){
+  commentary.textContent = `the final score is human ${humanScore} - ${computerScore} computer`;
+  let h3 = document.createElement("h3");
   if (humanScore > computerScore){
-    console.log("Congrats you just won the game");
+    h3.textContent = "Congrats you just won the game";
   }
-  else if (computerScore>humanScore){
-    console.log("The bots triumphs over human");
+  else if (computerScore > humanScore){
+    h3.textContent = "The bots triumphs over human";
   }
   else {
-    console.log("nobody wins");
+    h3.textContent = "nobody wins";
   }
+  commentary.append(h3);
 }
-playGame();
+
+let commentator = document.querySelector("#commentary");
+let playerOption = document.querySelector("#playerOption");
+
+playerOption.addEventListener('click',(event) => {
+  let target = event.target;
+
+  let humanChoice = '';
+  let computerChoice = getComputerChoice();
+
+  switch(target.id){
+    case 'rock':
+      humanChoice = "rock";
+      break;
+    case 'paper':
+      humanChoice = "paper";
+      break;
+    case 'scissors':
+      humanChoice = "scissors";
+      break;
+  }
+  playRound(humanChoice,computerChoice,commentator);
+  if (humanScore >= 5 || computerScore >= 5){
+    endRound();
+  }
+});
